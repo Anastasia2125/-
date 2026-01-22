@@ -1,0 +1,65 @@
+import json
+with open('orders_july_2023.json', 'r') as my_file:
+    orders_july_2023 = json.load(my_file)
+print(orders_july_2023)
+max_price = 0
+max_order = ''
+# цикл по заказам
+for order_num, orders_data in orders_july_2023.items():
+    # получаем стоимость заказа
+    price = orders_data['price']
+    # если стоимость больше максимальной - запоминаем номер и стоимость заказа
+    if price > max_price:
+        max_order = order_num
+        max_price = price
+print(f'Номер заказа с самой большой стоимостью: {max_order}, стоимость заказа: {max_price}')
+
+max_quantity = 0
+max_order = ''
+for order_num, orders_quantity in orders_july_2023.items():
+    # получаем количество товаров
+    quantity = orders_quantity['quantity']
+    # если количество товаров больше максимальной - запоминаем номер и количество товаров
+    if quantity > max_quantity:
+        max_order = order_num
+        max_quantity = quantity
+print(f'Номер заказа с самым большим количеством товаров: {max_order}, количество товаров: {max_quantity}')
+
+from collections import defaultdict
+date_counts = defaultdict(int)
+for order_num, order_data in orders_july_2023.items():
+    date_str = order_data['date']
+    date_counts[date_str] += 1
+if date_counts:
+    max_date = max(date_counts, key=date_counts.get)
+    max_count = date_counts[max_date]
+print(f'День с наибольшим количеством заказов: {max_date} - {max_count} заказа')
+
+user_counts = defaultdict(int)
+for order_num, order_data in orders_july_2023.items():
+    user_id = order_data['user_id']
+    user_counts[user_id] += 1
+if user_counts:
+    top_user = max(user_counts, key=user_counts.get)
+    top_user_count = user_counts[top_user]
+print(f'Пользователь с наибольшим количеством заказов: {top_user} ({top_user_count} заказов)')
+
+user_spending = defaultdict(float)
+for order_num, order_data in orders_july_2023.items():
+    user_id = order_data['user_id']
+    price = order_data['price']
+    user_spending[user_id] += price
+if user_spending:
+    top_spending_user = max(user_spending, key=user_spending.get)
+    top_spending_amount = user_spending[top_spending_user]
+print(f'Пользователь с наибольшей суммарной стоимостью заказов: {top_spending_user} (сумма {top_spending_amount})')
+
+total_orders = len(orders_july_2023)
+total_order_value = sum(order_data['price'] for order_num, order_data in orders_july_2023.items() if 'price' in order_data)
+average_order_price = total_order_value / total_orders if total_orders > 0 else 0
+print(f'Средняя стоимость заказа: {average_order_price}')
+
+total_items = sum(order_data['quantity'] for order_num, order_data in orders_july_2023.items() if 'quantity' in order_data)
+total_items_value = total_order_value
+average_item_price = total_items_value / total_items if total_items > 0 else 0
+print(f'Средняя стоимость товара: {average_item_price}')
